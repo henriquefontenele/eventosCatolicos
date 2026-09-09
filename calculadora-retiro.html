@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora do Retiro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F2EDDD;
+    --bg-card: #FBF8EF;
+    --ink: #2B2A22;
+    --ink-soft: #625E4E;
+    --forest: #23402C;
+    --forest-dark: #16261A;
+    --gold: #B0812C;
+    --gold-soft: #DDC48A;
+    --rule: #CFC29A;
+    --free: #6E8A6F;
+    --danger: #A24B3B;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Work Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body{
+    padding: 40px 20px 80px;
+    display:flex;
+    justify-content:center;
+  }
+
+  .sheet{
+    width:100%;
+    max-width: 620px;
+  }
+
+  header{
+    margin-bottom: 28px;
+  }
+
+  header .kicker{
+    font-size: 14px;
+    color: var(--forest);
+    letter-spacing: 0.02em;
+    margin: 0 0 6px;
+  }
+
+  h1{
+    font-family: 'Fraunces', serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 1.05;
+    margin: 0 0 10px;
+    color: var(--forest-dark);
+  }
+
+  header p.sub{
+    margin:0;
+    font-size: 15px;
+    color: var(--ink-soft);
+    max-width: 46ch;
+    line-height: 1.5;
+  }
+
+  .card{
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 24px 24px 26px;
+    margin-bottom: 20px;
+  }
+
+  .card h2{
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 20px;
+    margin: 0 0 4px;
+    color: var(--forest-dark);
+  }
+
+  .card .hint{
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 0 0 18px;
+    line-height: 1.5;
+  }
+
+  /* --- counters --- */
+  .counter-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .counter-row:last-child{ border-bottom:none; }
+
+  .counter-row .label strong{
+    display:block;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  .counter-row .label span{
+    display:block;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+  .counter-row.free .label strong{ color: var(--free); }
+
+  .stepper{
+    display:flex;
+    align-items:center;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .stepper button{
+    width: 32px;
+    height: 32px;
+    border-radius: 3px;
+    border: 1px solid var(--rule);
+    background: #fff;
+    color: var(--forest-dark);
+    font-size: 17px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .stepper button:hover{ background: var(--gold-soft); }
+  .stepper button:active{ transform: translateY(1px); }
+  .stepper output{
+    width: 40px;
+    text-align:center;
+    font-family: 'Work Sans', sans-serif;
+    font-weight:600;
+    font-size: 16px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* --- summary ledger --- */
+  .ledger .line{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding: 8px 0;
+    font-size: 14.5px;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .ledger .line .desc{ color: var(--ink); }
+  .ledger .line .desc small{
+    display:block;
+    color: var(--ink-soft);
+    font-size: 12px;
+    margin-top: 1px;
+  }
+  .ledger .line .amt{
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    padding-left: 14px;
+  }
+  .ledger .line.free .amt{ color: var(--free); }
+
+  .total-block{
+    margin-top: 14px;
+    padding-top: 16px;
+    border-top: 2px solid var(--forest-dark);
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+  }
+  .total-block .t-label{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: 19px;
+    color: var(--forest-dark);
+  }
+  .total-block .t-amount{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size: 32px;
+    color: var(--gold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .per-person{
+    text-align:right;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  footer{
+    text-align:center;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 30px;
+  }
+
+  @media (max-width: 480px){
+    h1{ font-size: 32px; }
+    .tier-row{ grid-template-columns: 1fr 1fr; }
+    .tier-remove{ grid-column: span 2; width: 100%; height: 30px; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header>
+    <p class="kicker">Retiro · orçamento</p>
+    <h1>Quanto vai custar o retiro?</h1>
+    <p class="sub">Informe quantas pessoas vão participar e o valor é calculado na hora — quarto, ônibus, inscrição e salão.</p>
+  </header>
+
+  <div class="card">
+    <h2>Quem vai</h2>
+    <p class="hint">Menores de 12 anos não pagam quarto, mas pagam ônibus e inscrição. A partir de 12 anos, paga tudo como adulto.</p>
+
+    <div class="counter-row">
+      <div class="label"><strong>Adultos</strong></div>
+      <div class="stepper" data-target="adultos">
+        <button type="button" data-step="-1">−</button>
+        <output>0</output>
+        <button type="button" data-step="1">+</button>
+      </div>
+    </div>
+
+    <div class="counter-row">
+      <div class="label"><strong>12 anos ou mais</strong><span>Adolescentes — pagam como adulto</span></div>
+      <div class="stepper" data-target="adolescentes">
+        <button type="button" data-step="-1">−</button>
+        <output>0</output>
+        <button type="button" data-step="1">+</button>
+      </div>
+    </div>
+
+    <div class="counter-row free">
+      <div class="label"><strong>Menores de 12 anos</strong><span>Não pagam quarto — pagam ônibus e inscrição</span></div>
+      <div class="stepper" data-target="criancas">
+        <button type="button" data-step="-1">−</button>
+        <output>0</output>
+        <button type="button" data-step="1">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Resumo do valor</h2>
+    <div class="ledger" id="ledger"></div>
+    <div class="total-block">
+      <div class="t-label">Total</div>
+      <div class="t-amount" id="totalAmt">R$ 0</div>
+    </div>
+    <div class="per-person" id="perPerson"></div>
+  </div>
+
+  <footer>Retiro · calculadora de valor</footer>
+</div>
+
+<script>
+(function(){
+  // Valores fixos do retiro — ajuste aqui diretamente no código.
+  const RATES = {
+    bus: 240.00,
+    inscricao: 70.00,
+    salao: 321.20
+  };
+
+  // Faixas de preço do quarto, por total de pagantes (adultos + adolescentes).
+  const ROOM_TIERS = [
+    { min: 1, max: 2, valor: 2133.81 },
+    { min: 1, max: 3, valor: 1991.43 },
+    { min: 1, max: 4, valor: 1896.61 }
+  ];
+
+  const state = {
+    counts: { adultos: 0, adolescentes: 0, criancas: 0 }
+  };
+
+  const fmt = (n) => 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  // ---------- counters ----------
+  document.querySelectorAll('.stepper').forEach(stepper => {
+    const key = stepper.dataset.target;
+    const out = stepper.querySelector('output');
+    stepper.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const step = parseInt(btn.dataset.step, 10);
+        state.counts[key] = Math.max(0, state.counts[key] + step);
+        out.textContent = state.counts[key];
+        calc();
+      });
+    });
+  });
+
+  // ---------- calculation ----------
+  const ledger = document.getElementById('ledger');
+  const totalAmt = document.getElementById('totalAmt');
+  const perPerson = document.getElementById('perPerson');
+
+  function roomRateFor(payingCount){
+    if (payingCount <= 0) return 0;
+    for (const tier of ROOM_TIERS) {
+      if (payingCount >= tier.min && payingCount <= tier.max) return tier.valor;
+    }
+    const sorted = [...ROOM_TIERS].sort((a,b) => a.max - b.max);
+    return sorted.length ? sorted[sorted.length - 1].valor : 0;
+  }
+
+  function calc(){
+    const payingRoom = state.counts.adultos + state.counts.adolescentes;
+    const payingTransport = state.counts.adultos + state.counts.adolescentes + state.counts.criancas;
+    const familias = Math.ceil(state.counts.adultos / 2);
+
+    const roomRate = roomRateFor(payingRoom);
+    const roomTotal = roomRate * payingRoom;
+    const busTotal = RATES.bus * payingTransport;
+    const inscTotal = RATES.inscricao * payingTransport;
+    const salaoTotal = RATES.salao * familias;
+
+    const total = roomTotal + busTotal + inscTotal + salaoTotal;
+
+    ledger.innerHTML = `
+      <div class="line">
+        <div class="desc">Quarto <small>${payingRoom} pagante${payingRoom===1?'':'s'} × ${fmt(roomRate)}</small></div>
+        <div class="amt">${fmt(roomTotal)}</div>
+      </div>
+      <div class="line">
+        <div class="desc">Ônibus <small>${payingTransport} × ${fmt(RATES.bus)}</small></div>
+        <div class="amt">${fmt(busTotal)}</div>
+      </div>
+      <div class="line">
+        <div class="desc">Inscrição <small>${payingTransport} × ${fmt(RATES.inscricao)}</small></div>
+        <div class="amt">${fmt(inscTotal)}</div>
+      </div>
+      <div class="line">
+        <div class="desc">Salão <small>${familias} família${familias===1?'':'s'} (a cada 2 adultos) × ${fmt(RATES.salao)}</small></div>
+        <div class="amt">${fmt(salaoTotal)}</div>
+      </div>
+      ${state.counts.criancas > 0 ? `
+      <div class="line free">
+        <div class="desc">${state.counts.criancas} criança${state.counts.criancas===1?'':'s'} menor${state.counts.criancas===1?'':'es'} de 12 anos <small>não paga${state.counts.criancas===1?'':'m'} quarto — paga${state.counts.criancas===1?'':'m'} ônibus e inscrição</small></div>
+        <div class="amt">—</div>
+      </div>` : ''}
+    `;
+
+    totalAmt.textContent = fmt(total);
+    const totalPessoas = payingTransport;
+    perPerson.textContent = payingRoom > 0 || payingTransport > 0
+      ? `${fmt(payingTransport > 0 ? total / payingTransport : 0)} por pessoa em média · ${totalPessoas} pessoa${totalPessoas===1?'':'s'} no total`
+      : 'Informe quantas pessoas vão participar';
+  }
+
+  calc();
+})();
+</script>
+</body>
+</html>
